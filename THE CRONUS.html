@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>THE CRONUS - 진리의 수확자</title>
+    <style>
+        /* [1. 폰트 및 공통 스타일] */
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Nanum+Myeongjo:wght@400;700&family=Nanum+Gothic+Coding&family=Noto+Sans+KR:wght@300;400&display=swap');
+
+        :root {
+            --gold: #af935d;
+            --deep-blue: #050a10;
+            --soft-white: #d1d1d1;
+            --title-font: 'Cinzel', serif;
+            --body-font: 'Nanum Myeongjo', serif;
+            --code-font: 'Nanum Gothic Coding', monospace;
+        }
+
+        body { 
+            background-color: var(--deep-blue); 
+            color: var(--soft-white); 
+            font-family: var(--body-font); 
+            margin: 0; padding: 0; 
+            line-height: 1.8; 
+            transition: background-color 0.8s; 
+            overflow-x: hidden; 
+        }
+
+        /* [2. 페이지 시스템] */
+        .page { display: none; }
+        .page.active { display: block; }
+
+        header {
+            border-bottom: 2px solid var(--gold);
+            padding: 50px 20px;
+            text-align: center;
+            background: radial-gradient(circle, #0d1621 0%, #050a10 100%);
+        }
+
+        .logo {
+            font-family: var(--title-font);
+            color: var(--gold);
+            font-size: 50px;
+            letter-spacing: 12px;
+            text-shadow: 0 0 20px rgba(175, 147, 93, 0.4);
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .logo-sub { font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: 5px; margin-top: 10px; }
+
+        .container { max-width: 950px; margin: 40px auto; display: flex; gap: 40px; padding: 0 20px; }
+        main { flex: 2; }
+        aside { flex: 1; border-left: 1px solid #222; padding-left: 25px; }
+
+        /* [3. 기사 레이아웃 공통] */
+        .article-title { font-size: 34px; color: #fff; margin-bottom: 10px; word-break: keep-all; font-weight: 700; }
+        .article-meta { font-size: 13px; color: var(--gold); border-bottom: 1px solid #222; padding-bottom: 20px; margin-bottom: 30px; }
+        .main-img { width: 100%; height: auto; max-height: 450px; background-color: #111; border: 1px solid #222; object-fit: cover; margin-bottom: 30px; }
+        .content p { margin-bottom: 25px; text-align: justify; }
+
+        /* [4. 특수 스타일] */
+        ::selection { background: #600; color: #fff; }
+        .ghost-text { color: transparent; transition: color 3s; cursor: default; text-align: center; display: block; margin-top: 50px; font-style: italic; }
+        .ghost-text:hover { color: #333; }
+        .hidden-data { font-family: var(--code-font); font-size: 11px; color: #060c14; }
+
+        /* [5. 댓글 섹션] */
+        .comment-section { margin-top: 80px; border-top: 2px solid #222; padding-top: 30px; }
+        .comment-header { font-size: 18px; color: var(--gold); margin-bottom: 25px; font-weight: bold; }
+        .comment-box { 
+            border-bottom: 1px solid #222; 
+            padding: 20px 10px; 
+        }
+
+/* 마지막 댓글의 하단 선은 제거하여 깔끔하게 마무리합니다 */
+.comment-box:last-of-type { border-bottom: none; }
+
+.comment-meta { font-size: 12px; color: #666; display: flex; justify-content: space-between; margin-bottom: 10px; }
+.comment-text { font-size: 14px; color: #bbb; }
+.comment-deleted { color: #972424; font-style: italic; opacity: 0.8; }
+.comment-input-area { margin-top: 40px; border: 1px dashed #333; padding: 20px; text-align: center; font-size: 13px; color: #555; }
+
+        /* [6. 암호 입력창] */
+        #auth-container { text-align: center; padding: 150px 20px; }
+        #auth-container input { background: #000; border: 1px solid var(--gold); color: var(--gold); padding: 15px; font-family: var(--code-font); font-size: 20px; width: 350px; text-align: center; margin-bottom: 20px; }
+        #auth-container button { display: block; margin: 0 auto; background: var(--gold); border: none; color: #000; padding: 10px 40px; cursor: pointer; font-family: var(--title-font); font-weight: bold; }
+
+        /* [7. 레벤 연구소 모드 전용] */
+        .archive-mode { background-color: #1a1510 !important; }
+        .archive-mode .article-title { color: #b0a48e; }
+        .archive-mode .article-meta { color: #8e7f6a; border-color: #3d352a; }
+        .archive-mode .main-img { filter: sepia(0.6) grayscale(0.3) contrast(1.1); border-color: #3d352a; }
+        .archive-mode body, .archive-mode p { color: #9a8d77; }
+
+        /* [8. 비밀 사이트 특수 연출] */
+        .scanline { width: 100%; height: 2px; background: rgba(255, 0, 0, 0.2); position: fixed; top: 0; left: 0; pointer-events: none; animation: scan 4s linear infinite; display: none; z-index: 9999; }
+        @keyframes scan { from { top: 0; } to { top: 100%; } }
+        
+        .glitch-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; background: transparent; z-index: 9998; display: none; }
+        .glitch-active .glitch-overlay { display: block; animation: noise 0.2s infinite; }
+        @keyframes noise {
+            0% { background: rgba(255, 255, 255, 0.01); transform: translate(0,0); }
+            10% { background: rgba(255, 0, 0, 0.02); transform: translate(-5px, 2px); }
+            50% { background: rgba(0, 0, 255, 0.01); transform: translate(5px, -2px); }
+            90% { background: rgba(0, 255, 0, 0.02); transform: translate(-2px, 5px); }
+        }
+
+        .secret-report { max-width: 800px; margin: 0 auto; text-align: left; padding: 40px; border-left: 2px solid #600; background: rgba(10, 0, 0, 0.9); position: relative; }
+        .report-header { color: #600; font-family: var(--code-font); border-bottom: 1px solid #300; padding-bottom: 10px; margin-bottom: 30px; }
+        .typing-text { color: #900; font-family: var(--code-font); line-height: 2; text-shadow: 0 0 5px rgba(150, 0, 0, 0.5); }
+        
+        .vibrate { animation: shake 0.5s infinite; }
+        @keyframes shake {
+            0% { transform: translate(0.5px, 0.5px); }
+            20% { transform: translate(-0.5px, 0px); }
+            40% { transform: translate(0.5px, -0.5px); }
+            100% { transform: translate(0px, 0.5px); }
+        }
+
+        footer { text-align: center; padding: 80px 20px; color: #666666; font-size: 11px; letter-spacing: 2px; }
+    </style>
+</head>
+<body id="master-body">
+    <div class="scanline" id="global-scan"></div>
+    <div class="glitch-overlay" id="global-glitch"></div>
+
+    <div id="page-news" class="page active">
+        <header>
+            <div class="logo" onclick="location.reload()">THE CRONUS</div>
+            <div class="logo-sub">진리의 수확자</div>
+        </header>
+        <div class="container">
+            <main>
+                <article>
+                    <h1 class="article-title">크로니클 재단, ‘재귀성 세포 붕괴증(RCC)’ 환자 치료 무상 지원</h1>
+                    <div class="article-meta">2026.01.02. 오전 11:12 | 정현아 기자</div>
+                    <img src="https://raw.githubusercontent.com/gold-79/immortal_img/refs/heads/main/%ED%99%8D%EC%9D%80%EC%98%81_%EC%9D%B4%EC%82%AC%EC%9E%A5.png" class="main-img">
+                    <p style="text-align: center; font-size:13px; color:#666; margin-top:-15px; margin-bottom:30px;">크로니클 재단 이사장 홍은영. 사진=크로니클 재단</p>
+                    <div class="content">
+                        <p>크로니클 재단(이사장 홍은영)이 희귀 난치병 재귀성 세포 붕괴증(RCC: Recursive Cellular Collapse) 환자를 대상으로 치료를 무상으로 지원할 것이라 밝혔다.</p>
+                        <p>지난 1일 재단 대변인은 “모든 RCC 환자를 대상으로 무상 치료를 지원할 것”이라며, “앞으로도 크로니클 재단은 ‘인류의 생명 보호’라는 가치 실현을 위해 투자를 아끼지 않을 것”이라 밝혔다.</p>
+                        <p>RCC는 세포가 스스로를 공격하는 자가면역과 비정상적인 회복력이 겹쳐 붕괴와 재구성을 반복하는 희귀성 난치병이다. 이 과정에서 환자들은 극심한 고통을 겪으며, 심한 경우 의식을 잃는다고 알려져 있다.</p>
+                        <p>현재 RCC는 원인 불명의 신경계 교란으로 인해 발생하는 것으로 추정되며, 재단 측은 "환자의 신체 에너지가 비정상적으로 임계점을 넘나들기 때문에 일반 병원에서의 치료는 불가능에 가깝다"고 설명했다. 이에 따라 크로니클 재단은 전담 특수 이송팀을 편성하여 전국 각지의 확진자를 재단 산하 전문 병동으로 이송 및 격리 보호할 예정이다.</p>
+                        <p>재단 연구소장은 “RCC 환자들은 겉보기에 재생력이 뛰어난 것처럼 보일 수 있으나, 이는 실제로는 죽음에 이르지 못한 채 육체가 한계까지 마모되는 과정”이라며, “재단만이 보유한 ‘세포 동기화 안정 기술’을 통해서만 이 끔찍한 연쇄 붕괴를 잠재울 수 있다”고 덧붙였다.</p>
+                        <p>기존 의학계에서 RCC 치료비는 최소 수억 원을 호가하는 것으로 평가되어 왔다. 이에 대해 재단 관계자는 ‘세포 동기화 안정 기술’을 도입해 비용 최적화를 실현했으며, 이를 기반으로 전면 무상 치료라는 파격적인 인도주의적 결단을 내릴 수 있었다고 설명했다.</p>
+                        <p>세포병리학회 이사장인 박도준 박사는 이번 사업에 대해 'RCC는 단순한 변이가 아니라 생체 리듬 자체가 물리적으로 붕괴하는 현상'이라며, '개인이 감당할 수 없는 천문학적인 치료비를 재단이 전액 부담하는 것은 의학계에서도 전례 없는 인도적 결단'이라고 평가했다. 박 박사는 이어 'RCC 환자의 비정상적인 세포 재구성은 미세 전자기파를 발생시켜 주변인의 뇌파까지 교란할 위험이 크기에, 크로니클 재단의 전문적인 격리 수용 시스템은 사회 안전망 차원에서도 반드시 필요하다'고 강조했다.</p>
+                        <p style="color:#666; font-size:14px;">정현아 기자 candor@cronus.com</p>
+                        <p class="ghost-text">하늘을 찬탈한 황충은 황금 밀밭을 수확하여, 영원한 시간을 엮어내리라</p>
+                    </div>
+                </article>
+                <section class="comment-section">
+                    <div class="comment-header">의견 (3)</div>
+                    <div class="comment-box"><div class="comment-meta"><span>haha****</span><span>11:16</span></div><div class="comment-text">새해부터 멋진 소식이네요.</div></div>
+                    <div class="comment-box"><div class="comment-meta"><span>Unknown</span><span>12:05</span></div><div class="comment-text comment-deleted">[ 관리자에 의해 삭제된 댓글입니다. ]</div></div>
+                    <div class="comment-box">
+                        <div class="comment-meta"><span>lomo****</span><span>13:20</span></div>
+                        <div class="comment-text">허상을 좇는 하늘이여, 기원의 날을 잊지 말지어다. <span class="hidden-data">/access_location: below_chronicle</span></div>
+                        <div class="comment-input-area">로그인 회원만 댓글을 작성할 수 있습니다.</div>
+                    </div>
+                </section>
+            </main>
+            <aside>
+                <h3 style="color: var(--gold); font-size: 16px;">더 크로노스 주요뉴스</h3>
+                <ul style="list-style: none; padding: 0; font-size: 14px;">
+                    <li style="margin-bottom: 25px;"><a href="#" onclick="changePage('page-leben')" style="color: #bbb; text-decoration: none; font-weight: bold;">[기획] 희망의 실전, 1926년 레벤 연구소 폭격 사건</a></li>
+                    <li style="margin-bottom: 15px;"><a href="#" style="color: #666; text-decoration: none;">아스테르, EP 2집 'Eden' 티저 이미지 공개</a></li>
+                </ul>
+            </aside>
+        </div>
+    </div>
+
+    <div id="page-leben" class="page">
+        <header>
+            <div class="logo" onclick="changePage('page-news')">THE CRONUS</div>
+            <div class="logo-sub">기획 아카이브</div>
+        </header>
+        <div class="container">
+            <main>
+                <article>
+                    <h1 class="article-title">[기획] 희망의 실전, 1926년 레벤 연구소 폭격 사건</h1>
+                    <div class="article-meta">2026.01.02. 기획 취재팀</div>
+                    <img src="https://raw.githubusercontent.com/gold-79/immortal_img/refs/heads/main/18881222_leben.png" class="main-img">
+                    <p style="text-align: center; font-size:13px; color:#666; margin-top:-15px; margin-bottom:30px;">▲ 1926년 1월 2일 오전 3시 경, 붕괴한 레벤 연구소. 더 크로노스 자료사진</p>
+                    <div class="content">
+                        <p>100년 전 오늘, 1926년 1월 2일 밤, 카일루스 재단 산하 '레벤 연구소'에 발생한 폭격은 당시 의학계를 뒤흔든 비극이었습니다. 모든 연구 데이터가 소실된 가운데, 현장에 있던 다수의 연구원은 사망하였습니다.</p>
+                        <p>당시 불길 속에서 소녀가 실종된 연구원을 끌고 나오는 것을 보았다는 증언이 있었으나, 재단은 이를 '극한 상황에서의 집단 환각'으로 결론지었습니다.</p>
+                        <p>'레벤 연구소'는 당시 의학 연구의 선두에 서 있던 기관으로, 재귀성 세포 붕괴증을 포함한 희귀 난치병과 수많은 암에 대한 치료법을 연구 중이었습니다. 그런만큼 불법적인 생체 실험을 자행하거나, 영생에 대한 연구를 진행한다는 등 수많은 음모론에 휘말린 것으로도 알려져 있습니다.</p>
+                        <p><strong>카일루스 재단은 1888년 12월 22일</strong>, 희귀병 연구를 위한 '레벤 연구소'를 설립하고 꾸준한 연구를 이어온 바 있습니다.</p>
+                        <p>레벤 연구소 폭격 사건은 인근을 비행하던 공군 폭격기의 오발로 인해 발생한 것으로 밝혀졌습니다.</p>
+                        <p>한편 레벤 연구소에서 진행 중이던 대다수의 연구가 마무리 단계에 돌입해 수많은 생명을 살릴 예정이었던 사실이 알려져, 많은 이들의 안타까움을 사기도 했습니다. 폭격의 생존자인 EU.H 책임연구원은 "이 사건은 의학계 뿐만 아니라, 세계에 닥친 비극"이라며, "재단은 사건 수습과 연구 재개에 투자를 아끼지 말아야 할 것"이라고 밝혔습니다.</p>
+                        <p>카일루스 재단은 폭격 사건에 유감을 표하며, 사건이 수습된 후 1932년 레벤 연구소의 후신인 '아니마 연구소'를 설립했습니다. 또한 같은 해 '크로니클 재단'으로 재단명을 변경하였습니다.</p>
+                        <br>
+                        <button onclick="changePage('page-news')" style="background:none; border:1px solid #444; color:#444; cursor:pointer; padding:10px 20px;">메인 뉴스로 돌아가기</button>
+                    </div>
+                </article>
+            </main>
+            <aside>
+                <h3 style="color: #8e7f6a; font-size: 16px;">더 크로노스 주요뉴스</h3>
+                <ul style="list-style: none; padding: 0; font-size: 14px;">
+                    <li style="margin-bottom: 15px; color: #555;">우니일보, 언론윤리위원회에 '가짜뉴스 자제' 경고...</li>
+                    <li style="margin-bottom: 15px; color: #555;">4DGP의 정체, 4verse 출신의 라임...?</li>
+                </ul>
+            </aside>
+        </div>
+    </div>
+
+    <div id="page-auth" class="page">
+        <div id="auth-container">
+            <h2 style="color:var(--gold); font-family:var(--title-font); letter-spacing: 5px;">ACCESS RESTRICTED</h2>
+            <p style="color:#444; font-size:12px; margin-bottom: 30px;">INTERNAL INTRANET ACCESS CODE REQUIRED</p>
+            <input type="password" id="access-pw" placeholder="PASSWORD">
+            <button onclick="validatePW()">ACCESS</button>
+            <p onclick="changePage('page-news')" style="margin-top:20px; color:#666666; cursor:pointer; font-size:11px;">BACK TO PUBLIC SITE</p>
+        </div>
+    </div>
+
+    <div id="page-secret" class="page">
+        <div style="padding: 100px 20px; text-align: center;">
+            <h1 id="secret-title" style="color:#f00; font-family:var(--code-font); letter-spacing: 8px;">UNAUTHORIZED ACCESS</h1>
+            <div id="secret-body" class="secret-report">
+                </div>
+            <button onclick="location.reload()" style="margin-top:50px; background:none; border:1px solid #222; color:#222; cursor:pointer;">SYSTEM SHUTDOWN</button>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2026 CHRONICLE FOUNDATION. <br>
+        <span style="opacity: 0.25; cursor: pointer;" onclick="changePage('page-auth')">[skyline]</span>
+    </footer>
+
+    <script>
+        function changePage(pageId) {
+            const body = document.getElementById('master-body');
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            
+            // 특수 효과 초기화
+            document.getElementById('global-scan').style.display = 'none';
+            body.classList.remove('glitch-active');
+            
+            document.getElementById(pageId).classList.add('active');
+            
+            // 페이지별 배경 테마 적용
+            if(pageId === 'page-leben') {
+                body.classList.add('archive-mode');
+            } else {
+                body.classList.remove('archive-mode');
+            }
+            
+            if(pageId === 'page-secret') {
+                body.style.backgroundColor = '#000';
+                document.getElementById('global-scan').style.display = 'block';
+                body.classList.add('glitch-active');
+            } else {
+                body.style.backgroundColor = ''; 
+            }
+            window.scrollTo(0,0);
+        }
+
+        function validatePW() {
+            const pw = document.getElementById('access-pw').value.toUpperCase().trim();
+            if(pw === "CAELUS_18881222") {
+                revealTruth();
+            } else {
+                alert("인가되지 않은 접근입니다.");
+            }
+        }
+
+        function revealTruth() {
+            const secretTitle = document.getElementById('secret-title');
+            secretTitle.innerHTML = "ACCESS GRANTED: INTERNAL_REPORT_1926_EX";
+            secretTitle.style.color = "#600";
+            
+            const reportContent = `
+<div class="report-header vibrate">
+    [기밀 문건 1926-EX-01: 작전 성공 보고] <br>
+    발신: 카일루스 특별 집행부 <br>
+    수신: EU.H 이사장
+</div>
+<div class="typing-text vibrate">
+    > 레벤 작전 결과: <br>
+    연구소 폐쇄 및 구 이사진 숙청 완료. 외부에는 '오발 사고'로 완벽 위장됨. <br>
+    수신인(EU.H)의 지시에 따라 RCC 관련 핵심 데이터는 폭격 전 전량 백업 및 이관 성공. <br><br>
+
+    > 미회수 자산 보고: <br>
+    - 선임연구원 Lemon.A: 사체 미발견. 실험체 H-A1V0와 함께 이탈했다는 증언 존재. <br>
+    - 실험체 H-A1V0: 수용동 파괴 시 탈출. <br>
+    - RCC 관련 지류 자료: 일부 지류 자료의 유출 의심. <br><br>
+
+    > 사후 조치 결과: <br>
+    탈출 9년 후, 실험체 H-A1V0 고유 주파수 재감지. 특정 구역 추적을 통해 재회수 성공. <br>
+    회수 당시 H-A1V0는 휴면 상태였으며, 유출됐던 RCC 관련 지류 자료도 발견. <br>
+    현재 H-A1V0는 크로니클 지하 4층(Basement_04) 특수 동결 섹션 안치됨. <br>
+    텔로미어 마모 계수 0.00% 유지 중. <br><br>
+
+    > 최종 결론: <br>
+    EU.H 이사장 주도하에 '수확' 단계 진입 승인됨. <br>
+    Lemon.A의 잔류 사념으로 의심되는 보안 침해 시도 지속 차단 중.
+</div>
+<div style="color: #f00; font-family: var(--code-font); margin-top: 30px; font-weight: bold; border-top: 1px dashed #600; padding-top: 10px;" class="vibrate">
+    [시스템 오류: 허가되지 않은 접근 감지] <br>
+    "순리를 갉아먹는 벌레떼의 아성은 무너지리라."
+</div>`;
+            
+            document.getElementById('secret-body').innerHTML = reportContent;
+            changePage('page-secret');
+        }
+    </script>
+</body>
+</html>
